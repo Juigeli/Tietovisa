@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <link rel="shortcut icon" href="favicon.ico">
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />      
+    <title>5. Tietovisa</title>
+    
+    <script language="JavaScript">
+      
+      //Kerrotaan kysymysten määrä ja vastausvaihtoehtojen määrä per kysymys
+      var kysymystenMaara = 4;
+      var vaihtoehtojenMaara = 3;
+      
+      //Tässä on vastaukset
+      var vastaukset = new Array();
+        vastaukset[0] = 2;
+        vastaukset[1] = 1;
+        vastaukset[2] = 1;
+        vastaukset[3] = 3;
+      
+      var vastattu = false;
+      
+      //Lomakkeen tarkistus, virheilmoitukset ja palaute
+      function tarkista(lomake) {
+        li = lomake.getElementsByTagName('li');
+        for (var i=0; i < li.length; i++){
+          li[i].style.color = "";
+          li[i].style.fontWeight="";  
+        }      
+        var pisteet = 0;
+        var kysymys;
+        var kysymyksenVastaus;
+        var vastaustenMaara = 0;
+          for (i=0; i<kysymystenMaara; i++) {
+            kysymys = i*vaihtoehtojenMaara;
+            for (j=0; j<vaihtoehtojenMaara; j++) {
+              kysymyksenVastaus = lomake.elements[kysymys + j + 1];
+              if (kysymyksenVastaus.checked) {
+                vastaustenMaara++;  
+                if (j+1 == vastaukset[i]) {
+                  lomake.getElementsByTagName('li')[kysymys + j].style.color = "ForestGreen";
+                  lomake.getElementsByTagName('li')[kysymys + j].style.fontWeight="bold";
+                  pisteet++;
+                  break;
+                }
+                else {
+                  lomake.getElementsByTagName('li')[kysymys + j].style.color = "red";
+                  lomake.getElementsByTagName('li')[kysymys + j].style.fontWeight="bold";
+                  break;
+                }              
+              }
+            }
+          }
+        document.getElementById('tulostaulu').innerHTML = '';
+        if (vastaustenMaara == kysymystenMaara && lomake.nimi.value.match(/\w/)) {
+          vastattu = true;          
+          pisteetProsentteina = Math.round(pisteet/kysymystenMaara*100);
+          var palaute = 'Palautetta tulossa';
+          if (pisteetProsentteina == 0) {
+            palaute = 'Eli nyt meni kyllä melkoisen heikosti, ei yhtään oikein :( Voimia!'  
+          }
+          else if (pisteetProsentteina <= 25) {
+            palaute = 'Eli no joo, menihän se nyt jotenkin sinne päin...';
+          }
+          else if (pisteetProsentteina <= 50) {
+            palaute = 'Ihan jees, mutta ei tällä tuloksella vielä kuuhun kyllä mennä.';
+          }
+          else if (pisteetProsentteina <= 75) {
+            palaute = 'No sehän meni aika näpsäkästi!';
+          } 
+          else if (pisteetProsentteina < 100) {
+            palaute = 'Vau! Mahtava tulos!';
+          }
+          else if (pisteetProsentteina == 100) {
+            palaute = 'Mahtavaa! Kaikki oikein! Taidat olla melkoinen expertti!';
+          }                       
+          document.getElementById('tulostaulu').innerHTML = '<p>No niin ' + lomake.nimi.value + ', katsotaanpas tuloksia.</p><p>Sait ' + pisteet + ' kysymystä oikein eli ' + pisteetProsentteina + ' %.</p><p>' + palaute + '</p>';
+        }
+        else { 
+          tyhjenna(lomake);
+          if (!lomake.nimi.value.match(/\w/)) {
+            document.getElementById('tulostaulu').innerHTML = '<p style="color: red; font-weight: bold;">Anna nimesi, kiitos.</p>'; 
+          }
+          if (vastaustenMaara != kysymystenMaara) {
+            document.getElementById('tulostaulu').innerHTML += '<p style="color: red; font-weight: bold;">Vastaathan kaikkiin kysymyksiin, kiitos.</p>'; 
+          }
+        }      
+      }
+      
+      //Poistetaan muotoilut
+      function tyhjenna(lomake){
+        li = lomake.getElementsByTagName('li');
+        for (var i=0; i < li.length; i++){
+          li[i].style.color = "";
+          li[i].style.fontWeight="";  
+        }      
+      }
+      
+      //Näytetän vastaukset
+      function naytaVastaukset(lomake){
+        //tarkista(lomake);
+        if (vastattu){
+          for (i=0; i<kysymystenMaara; i++) {
+            kysymys = i*vaihtoehtojenMaara;
+            for (j=0; j<vaihtoehtojenMaara; j++) {
+              kysymyksenVastaus = lomake.elements[kysymys + j + 1];
+              if (j+1 == vastaukset[i]) {
+                lomake.getElementsByTagName('li')[kysymys + j].style.color = "ForestGreen";
+                lomake.getElementsByTagName('li')[kysymys + j].style.fontWeight="bold";
+                break;
+              }            
+            }
+          }       
+          document.getElementById('tulostaulu').innerHTML = '<p>Olkaapa hyvä, oikeat vastauksethan ne siinä :)</p>';         
+        }
+        else{
+          document.getElementById('tulostaulu').innerHTML = '<p>Kokeile ensin vastata kysymyksiin :)</p>'; 
+        }
+      }
+    </script>
+    
+    <style type="text/css">
+      @font-face {
+       font-family: vampyre;
+       src: url(vampyre.ttf);
+      }
+      body{
+        background-image: url('tausta.jpg');
+      }       
+      #page {
+        left: 50%;
+        margin-top: 10px;
+        margin-bottom: 10px;
+        margin-left: auto;
+        margin-right: auto;
+        width: 500px;
+        height: auto;
+        padding: 10px;
+        background-color: rgba(255, 255, 255, 0.6);
+        border-radius: 10px;
+        color: white;        
+        font-family: Helvetica, Arial, sans-serif;
+        color:#000000;
+        font-size:14px;
+        border: solid 2px #24bce8;
+      }
+      #quiz li { 
+        list-style-image: url('list.png');
+      }          
+      #otsikko{
+        width: 100%;
+        height: 34px;
+        text-align: center;
+        font-family: vampyre;
+        font-size: 24px;        
+      }
+      #alaotsikko{
+        width: 100%;
+        height: 20px;
+        text-align: center;
+        font-family: vampyre;
+        font-size: 12px;
+        font-style: italic;
+        font-weight: normal;        
+      }      
+      #nurkka{
+        position: fixed;
+        bottom: 0px;
+        right: 0px;    
+        width: 250px;
+        height: 250px;   
+        background-image: url('ala.png');
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        background-position: right bottom; 
+        z-index: -1;         
+      }    
+    </style>
+  
+  </head>
+  <body onload="javascript:document.getElementById('nimi').focus();">
+    <div id="page">
+      <div id="otsikko">
+        Frozen - Huurteinen seikkailu Tietovisa
+      </div>  
+
+      <form name="quiz" id="quiz" action="#">
+        <p>
+          Mikä on nimesi?
+          <input type="text" name="nimi" id="nimi">
+        </p>        
+        1. Elokuvassa esiintyvän kuningaskunnan nimi?
+          <ul style="margin-top: 1pt">
+            <li><input type="radio" name="q1">DunBroch</li>
+            <li><input type="radio" name="q1">Arendelle</li>
+            <li><input type="radio" name="q1">Corona</li>
+          </ul>
+  
+        2. Kuningas Agdarin ja kuningatar Idun esikoisen nimi?
+          <ul style="margin-top: 1pt">
+            <li><input type="radio" name="q2">Elsa</li>
+            <li><input type="radio" name="q2">Rapunzel</li>
+            <li><input type="radio" name="q2">Anna</li>
+          </ul>
+        3. Kuningas Agdarin ja kuningatar Idun kuopuksen nimi?
+          <ul style="margin-top: 1pt">
+            <li><input type="radio" name="q3">Anna</li>
+            <li><input type="radio" name="q3">Merida</li>
+            <li><input type="radio" name="q3">Elsa</li>
+          </ul>
+        4. Minkä niminen vekkuli lumiukko seikkailee elokuvassa?
+          <ul style="margin-top: 1pt">
+            <li><input type="radio" name="q4">Angus</li>
+            <li><input type="radio" name="q4">Maximus</li>
+            <li><input type="radio" name="q4">Olaf</li>
+          </ul>
+        
+        <input type="button" value="Tarkista" onClick="tarkista(this.form)">
+        
+        <input type="reset" value="Tyhjennä vastaukset" onClick="if(confirm('Haluatko varmasti tyhjentää kaikki vastaukset?')){document.getElementById('tulostaulu').innerHTML = '<p>Tervetuloa visailemaan</p>'; tyhjenna(this.form); return;}">
+        
+        <input type="button" value="Näytä vastaukset" onClick="naytaVastaukset(this.form)">
+      </form>
+      
+      <div id="tulostaulu" style="font-style: italic; margin-top:10px;">
+      <p>Tervetuloa visailemaan</p>
+      </div>
+      
+      <div id="alaotsikko">
+        Jussi Parkkinen INTINU13A6  
+      </div>
+    </div>
+    <div id="nurkka"></div>      
+    
+  </body>
+</html>
